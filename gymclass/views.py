@@ -6,33 +6,59 @@ from .serializers import *
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from rest_framework import status
+from rest_framework.permissions import AllowAny, IsAuthenticated, IsAdminUser
 
 
-@api_view(['GET', 'POST'])
-def gym_list(request):
-    if request.method == 'GET':
-        data = Gym.objects.all()
-        serializer = GymSerializer(data, context={'request': request}, many=True)
 
-        return Response(serializer.data)
+# @api_view(['GET', 'POST'])
+# def gym_list(request):
+#     if request.method == 'GET':
+#         data = Gym.objects.all()
+#         serializer = GymSerializer(data, context={'request': request}, many=True)
 
-    elif request.method == 'POST':
+#         return Response(serializer.data)
 
-        name = request.data.get("name", None)
-        openningtime = request.data.get('openningtime', None)
-        closingtime = request.data.get('closingtime', None)
-        image = request.data.get('image', None)
-        new_gym= Gym(name=name, openningtime=openningtime, closingtime=closingtime, image=image)
+#     elif request.method == 'POST':
 
-        try:
-            new_gym.save()
-            return JsonResponse({'status': 1, 'message': 'Your profile updated successfully!'})
-        except:
-            return JsonResponse({'status': 0, 'message': 'There was something wrong while updating your profile.'})
+#         name = request.data.get("name", None)
+#         openningtime = request.data.get('openningtime', None)
+#         closingtime = request.data.get('closingtime', None)
+#         image = request.data.get('image', None)
+#         new_gym= Gym(name=name, openningtime=openningtime, closingtime=closingtime, image=image)
 
+#         try:
+#             new_gym.save()
+#             return JsonResponse({'status': 1, 'message': 'Your profile updated successfully!'})
+#         except:
+#             return JsonResponse({'status': 0, 'message': 'There was something wrong while updating your profile.'})
 
-def class_list(request):
-    gym=Gym.objects.get(id=1)
+class GymList(ListAPIView):
+	serializer_class = GymSerializer
+	permission_classes = [IsAuthenticated]
+
+	def get_queryset(self):
+		return Gym.objects.all()
+
+# class ClassList(RetrieveAPIView):
+# 	queryset = Class.objects.all()
+# 	serializer_class = ClassSerializer
+# 	lookup_field = 'id'
+# 	lookup_url_kwarg = 'gym_id'
+# 	permission_classes = [AllowAny]
+
+class GymCreate(CreateAPIView):
+	serializer_class = GymSerializer
+	permission_classes = [IsAuthenticated, IsAdminUser]
+
+class ClassCreate(CreateAPIView):
+	serializer_class = ClassSerializer
+	permission_classes = [IsAuthenticated, IsAdminUser]
+
+	def perform_create(self, serializer):
+		serializer.save(gym_id=self.kwargs['gym_id'])
+
+def class_list(request, gym_id):
+    gym=Gym.objects.get(id=gym_id)
     classes = Class.objects.filter(gym=gym)
     return JsonResponse({
         "classes": [classs.format() for classs in classes]
@@ -43,3 +69,8 @@ def booking_list(request):
     return JsonResponse({
         "bookings": [book.format() for book in bookings]
     })
+
+class Register(CreateAPIView):
+    permission_classes = [AllowAny]
+    serializer_class = RegisterSerializer
+

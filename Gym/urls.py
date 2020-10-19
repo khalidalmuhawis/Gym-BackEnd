@@ -18,12 +18,23 @@ from django.contrib import admin
 from django.conf import settings
 from django.conf.urls.static import static
 from gymclass import views
+from django.urls import path
+from rest_framework_simplejwt.views import (
+    TokenObtainPairView,
+    TokenRefreshView,
+)
+
 
 urlpatterns = [
-    url(r'^admin/', admin.site.urls),
-    url('gyms/', views.gym_list, name='gym-list'),
-    url('classes/', views.class_list, name='classes-list'),
-    url('bookings/', views.booking_list, name='bookings-list')
+    path('gyms/', views.GymList.as_view(), name='gym-list'),
+    path('gyms/create/', views.GymCreate.as_view(), name='gym-create'),
+    path('classes/<int:gym_id>/', views.class_list, name='classes-list'),
+    path('classes/<int:gym_id>/create/', views.ClassCreate.as_view(), name='classes-create'),
+    path('bookings/', views.booking_list, name='bookings-list'),
+    # auth links
+    path('signin/', TokenObtainPairView.as_view(), name="api-signin"),
+    path('signup/', views.Register.as_view(), name="api-signup"),
+
 ]
 
 if settings.DEBUG:

@@ -6,7 +6,7 @@ class Gym(models.Model):
     name = models.CharField(max_length=100)
     openningtime = models.TimeField()
     closingtime = models.TimeField()
-    image = models.ImageField()
+    image = models.ImageField(null=True, blank=True) # Ali added this line to fix the null interity issue.
 
     def format(self):
         return {
@@ -24,7 +24,7 @@ class Gym(models.Model):
 class Class(models.Model):
     gym = models.ForeignKey(Gym, on_delete=models.CASCADE, related_name="classes")
     title = models.CharField(max_length=100)
-    type = models.CharField(max_length=100)
+    class_type = models.CharField(max_length=100)
     datetime = models.DateTimeField(auto_now=False, auto_now_add=False)
     isFree = models.BooleanField()
 
@@ -33,7 +33,7 @@ class Class(models.Model):
           'id': self.id,
           'gym': self.gym.name,
           'title': self.title,
-          'type': self.type,
+          'class_type': self.class_type,
           'datetime': self.datetime,
           'isFree': self.isFree
         }
@@ -44,7 +44,6 @@ class Class(models.Model):
 class Booking(models.Model):
     classes = models.ForeignKey(Class, on_delete=models.CASCADE, related_name="bookings")
     guest = models.ForeignKey(User, on_delete=models.CASCADE, related_name='guest')
-
 
     def format(self):
         return {
