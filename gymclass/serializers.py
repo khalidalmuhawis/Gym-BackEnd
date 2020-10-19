@@ -5,7 +5,7 @@ from django.contrib.auth.models import User
 class GymSerializer(serializers.ModelSerializer):
   class Meta:
     model = Gym
-    fields = ('id','name', 'openningtime', 'closingtime', 'image')
+    fields = ('id','name', 'openningtime', 'closingtime')
 
           # 'id': self.id,
           # 'gym': self.gym.name,
@@ -49,4 +49,4 @@ class ClassDetailsSerializer(serializers.ModelSerializer):
 class BookingSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = Booking
-		fields = ['classes', 'guest']
+		exclude = ['classes', 'guest']

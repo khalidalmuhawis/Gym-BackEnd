@@ -90,12 +90,9 @@ class ClassDetail(RetrieveAPIView):
 
 
 class BookClass(CreateAPIView):
-	serializer_class = BookingSerializer
-	permission_classes = [AllowAny]
-
-	def perform_create(self, serializer):
-		class_id = self.kwargs['class_id']
-		serializer.save(
-			guest = self.request.user,
-			classs = Class.objects.get(id=class_id),
-		)
+    serializer_class = BookingSerializer
+    # permission_classes = [AllowAny]
+    
+    def perform_create(self, serializer):
+        class_obj = Class.objects.get(id=self.kwargs['class_id'])
+        serializer.save(guest=self.request.user, classes=class_obj)
