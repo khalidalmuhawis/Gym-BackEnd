@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Gym, Class
+from .models import Gym, Class, Booking
 from django.contrib.auth.models import User
 
 class GymSerializer(serializers.ModelSerializer):
@@ -39,3 +39,14 @@ class RegisterSerializer(serializers.ModelSerializer):
         new_user.set_password(password)
         new_user.save()
         return validated_data
+
+class ClassDetailsSerializer(serializers.ModelSerializer):
+	class Meta:
+		model = Class
+		fields = '__all__'
+
+
+class BookingSerializer(serializers.ModelSerializer):
+	class Meta:
+		model = Booking
+		fields = ['classes', 'guest']

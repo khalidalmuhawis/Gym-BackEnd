@@ -28,9 +28,13 @@ from rest_framework_simplejwt.views import (
 urlpatterns = [
     path('gyms/', views.GymList.as_view(), name='gym-list'),
     path('gyms/create/', views.GymCreate.as_view(), name='gym-create'),
-    path('classes/<int:gym_id>/', views.class_list, name='classes-list'),
+    path('gyms/<int:gym_id>/', views.class_list, name='gyms-list'),
+    path('classes/<str:class_type>/', views.class_list_byType, name='classes-type'),
+    path('classes/<int:class_id>/detail/', views.ClassDetail.as_view(), name='classes-detail'),
     path('classes/<int:gym_id>/create/', views.ClassCreate.as_view(), name='classes-create'),
     path('bookings/', views.booking_list, name='bookings-list'),
+    path('bookings/<int:class_id>/create/', views.BookClass.as_view(), name='book-class'),
+
     # auth links
     path('signin/', TokenObtainPairView.as_view(), name="api-signin"),
     path('signup/', views.Register.as_view(), name="api-signup"),

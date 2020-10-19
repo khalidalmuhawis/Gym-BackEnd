@@ -64,6 +64,13 @@ def class_list(request, gym_id):
         "classes": [classs.format() for classs in classes]
     })
 
+def class_list_byType(request, class_type):
+    classes = Class.objects.filter(class_type=class_type)
+    return JsonResponse({
+        "classes": [classs.format() for classs in classes]
+    })
+
+
 def booking_list(request):
     bookings = Booking.objects.all()
     return JsonResponse({
@@ -74,3 +81,21 @@ class Register(CreateAPIView):
     permission_classes = [AllowAny]
     serializer_class = RegisterSerializer
 
+class ClassDetail(RetrieveAPIView):
+	queryset = Class.objects.all()
+	serializer_class = ClassDetailsSerializer
+	lookup_field = 'id'
+	lookup_url_kwarg = 'class_id'
+	permission_classes = [AllowAny]
+
+
+class BookClass(CreateAPIView):
+	serializer_class = BookingSerializer
+	permission_classes = [AllowAny]
+
+	def perform_create(self, serializer):
+		class_id = self.kwargs['class_id']
+		serializer.save(
+			guest = self.request.user,
+			classs = Class.objects.get(id=class_id),
+		)
